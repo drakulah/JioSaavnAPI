@@ -1,2 +1,2 @@
-# Raavn
-A Rust-based tool for extracting and parsing data from the JioSaavn Public API.
+# JioSaavnAPI
+An unofficial JioSaavn API written in rust.
