@@ -3,10 +3,11 @@ use serde_json::Value;
 
 use crate::utils::entity;
 
+mod parse_album;
+mod parse_artist;
+mod parse_playlist;
 mod parse_search;
 mod parse_song;
-mod parse_artist;
-mod parse_album;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JioSaavnPartialParser {}
@@ -18,6 +19,7 @@ pub trait ValueExtras {
   fn get_string(&self) -> String;
   fn get_int(&self) -> i64;
   fn get_str_as_int(&self) -> i64;
+  fn get_arr(&self) -> Vec<Value>;
 }
 
 impl ValueExtras for Value {
@@ -31,9 +33,14 @@ impl ValueExtras for Value {
   }
 
   fn get_str_as_int(&self) -> i64 {
-    match self.as_str().unwrap_or("").parse::<i64>() {
+    match self.as_str().unwrap_or("").replace(",", "").parse::<i64>() {
       Ok(integer) => integer,
       Err(_) => -1,
     }
+  }
+
+  fn get_arr(&self) -> Vec<Value> {
+    let def = &Vec::new();
+    self.as_array().unwrap_or(def).to_vec()
   }
 }
