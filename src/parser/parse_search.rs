@@ -24,7 +24,7 @@ impl JioSaavnResponseParser {
         let results = &value["results"];
 
         for result in results.as_array().unwrap_or(blank_array).into_iter() {
-          if let Some(parsed_song) = JioSaavnPartialParser::parse_song(result.to_string()) {
+          if let Some(parsed_song) = JioSaavnPartialParser::parse_song(result) {
             results_array.push(parsed_song);
           }
         }

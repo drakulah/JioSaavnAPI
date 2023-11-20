@@ -9,9 +9,9 @@ use crate::{
 use super::JioSaavn;
 
 impl JioSaavn {
-  pub async fn related_album(&self, album_id: &str) -> Result<String, ErrorKind> {
+  pub async fn related_album(&self, param: &str) -> Result<String, ErrorKind> {
     let uri_builder = DefaultClient::uri_builder()
-      .search_param("albumid", album_id)
+      .search_param("albumid", param)
       .search_param("__call", call::Reco::GetAlbumReco.as_str());
 
     match uri_builder.build() {

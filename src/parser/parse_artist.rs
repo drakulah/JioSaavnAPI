@@ -14,6 +14,16 @@ pub struct JioSaavnArtistBasicInfo {
 }
 
 impl JioSaavnPartialParser {
+  /**
+   * {
+   *     "id": "577926",
+   *     "name": "WALK THE MOON",
+   *     "role": "primary_artists",
+   *     "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
+   *     "type": "artist",
+   *     "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
+   * }
+   */
   pub fn parse_artist_basic_info(artist: &Value) -> Option<JioSaavnArtistBasicInfo> {
     let param = artist["id"].get_string().to_owned();
     let perma_url = artist["perma_url"].get_string();
