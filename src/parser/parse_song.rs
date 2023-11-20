@@ -3,12 +3,12 @@ use serde_json::Value;
 
 use crate::utils::{
   array::some_empty_string,
-  parser::{extract_id_from_url, parse_album_preview, parse_artists_preview, properize_explicit},
+  parser::{extract_id_from_url, properize_explicit},
 };
 
 use super::{
-  JioSaavnAlbumBasicInfo, JioSaavnArtistBasicInfo, JioSaavnPartialParser, JioSaavnResponseParser,
-  ValueExtras,
+  JioSaavnPartialParser, JioSaavnResponseParser,
+  ValueExtras, parse_artist::JioSaavnArtistBasicInfo, parse_album::JioSaavnAlbumBasicInfo,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -64,9 +64,6 @@ impl JioSaavnPartialParser {
           id.clone(),
           title.clone(),
           r#type.clone(),
-          lang.clone(),
-          year.clone(),
-          display_image.clone(),
           enc_media_url.clone(),
         ]) {
           return None;
@@ -77,12 +74,18 @@ impl JioSaavnPartialParser {
         }
 
         /*** Album & Artists ***/
-        let nullable_album = parse_album_preview(more_info);
+        let nullable_album = JioSaavnPartialParser::parse_album_basic_info(more_info);
         let artist_array_default = &Vec::new();
-        let artists_arr = more_info["artistMap"]["artists"]
+        let artists_arr = more_info["artistMap"]["primary_artists"]
           .as_array()
           .unwrap_or(artist_array_default);
-        let artists = parse_artists_preview(artists_arr);
+        let mut artists = Vec::new();
+
+        for each_artist in artists_arr.into_iter() {
+          if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_basic_info(each_artist) {
+            artists.push(parsed_artist);
+          }
+        }
 
         /*** Validate Artists ***/
         if artists.is_empty() {
@@ -104,10 +107,10 @@ impl JioSaavnPartialParser {
             album,
             artists,
           }),
-          None => None,
+          None => None
         }
       }
-      Err(_) => None,
+      Err(_) => None
     }
   }
 }

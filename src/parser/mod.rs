@@ -5,20 +5,8 @@ use crate::utils::entity;
 
 mod parse_search;
 mod parse_song;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnAlbumBasicInfo {
-  pub id: String,
-  pub title: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnArtistBasicInfo {
-  pub id: String,
-  pub title: String,
-  pub param: String,
-  pub display_image: String,
-}
+mod parse_artist;
+mod parse_album;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JioSaavnPartialParser {}
