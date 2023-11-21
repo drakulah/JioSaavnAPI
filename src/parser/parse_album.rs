@@ -7,7 +7,7 @@ use crate::utils::{
 };
 
 use super::{
-  parse_artist::JioSaavnArtistBasicInfo, parse_song::JioSaavnSong, JioSaavnPartialParser,
+  parse_artist::JioSaavnArtistPreview, parse_song::JioSaavnSong, JioSaavnPartialParser,
   JioSaavnResponseParser, ValueExtras,
 };
 
@@ -26,7 +26,7 @@ pub struct JioSaavnAlbumPreview {
   pub title: String,
   pub is_explicit: bool,
   pub display_image: String,
-  pub artists: Vec<JioSaavnArtistBasicInfo>,
+  pub artists: Vec<JioSaavnArtistPreview>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -39,7 +39,7 @@ pub struct JioSaavnAlbum {
   pub year: String,
   pub is_explicit: bool,
   pub display_image: String,
-  pub artists: Vec<JioSaavnArtistBasicInfo>,
+  pub artists: Vec<JioSaavnArtistPreview>,
   pub items: Vec<JioSaavnSong>,
 }
 
@@ -125,7 +125,7 @@ impl JioSaavnResponseParser {
         let mut artists = Vec::new();
 
         for each_artist in artists_arr.into_iter() {
-          if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_basic_info(each_artist) {
+          if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_preview(each_artist) {
             artists.push(parsed_artist);
           }
         }
@@ -188,10 +188,10 @@ impl JioSaavnResponseParser {
    *    }
    * ]
    */
-  pub fn parse_related_albums(text: String) -> Option<Vec<JioSaavnAlbumPreview>> {
+  pub fn parse_related_albums(text: String) -> Vec<JioSaavnAlbumPreview> {
+    let mut album_pre_array: Vec<JioSaavnAlbumPreview> = Vec::new();
     match serde_json::from_str::<Value>(&text) {
       Ok(value) => {
-        let mut album_pre_array: Vec<JioSaavnAlbumPreview> = Vec::new();
         let blank_array: &Vec<Value> = &Vec::new();
 
         for each_album_preview in value.as_array().unwrap_or(blank_array).into_iter() {
@@ -201,9 +201,9 @@ impl JioSaavnResponseParser {
             album_pre_array.push(parsed_album_pre);
           }
         }
-        Some(album_pre_array)
+        album_pre_array
       }
-      Err(_) => None,
+      Err(_) => album_pre_array,
     }
   }
 }
@@ -269,7 +269,7 @@ impl JioSaavnPartialParser {
     let mut artists = Vec::new();
 
     for each_artist in artists_arr.into_iter() {
-      if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_basic_info(each_artist) {
+      if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_preview(each_artist) {
         artists.push(parsed_artist);
       }
     }

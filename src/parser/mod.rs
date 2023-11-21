@@ -35,7 +35,7 @@ impl ValueExtras for Value {
   fn get_str_as_int(&self) -> i64 {
     match self.as_str().unwrap_or("").replace(",", "").parse::<i64>() {
       Ok(integer) => integer,
-      Err(_) => -1,
+      Err(_) => 0,
     }
   }
 

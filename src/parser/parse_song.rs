@@ -7,7 +7,7 @@ use crate::utils::{
 };
 
 use super::{
-  parse_album::JioSaavnAlbumBasicInfo, parse_artist::JioSaavnArtistBasicInfo,
+  parse_album::JioSaavnAlbumBasicInfo, parse_artist::JioSaavnArtistPreview,
   JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras,
 };
 
@@ -24,7 +24,7 @@ pub struct JioSaavnSong {
   pub duration: i64,
   pub is_explicit: bool,
   pub album: JioSaavnAlbumBasicInfo,
-  pub artists: Vec<JioSaavnArtistBasicInfo>,
+  pub artists: Vec<JioSaavnArtistPreview>,
 }
 
 impl JioSaavnResponseParser {
@@ -129,10 +129,6 @@ impl JioSaavnPartialParser {
       return None;
     }
 
-    if duration == -1 || plays == -1 {
-      return None;
-    }
-
     /*** Album & Artists ***/
     let nullable_album = JioSaavnPartialParser::parse_album_basic_info(more_info);
     let artist_array_default = &Vec::new();
@@ -142,7 +138,7 @@ impl JioSaavnPartialParser {
     let mut artists = Vec::new();
 
     for each_artist in artists_arr.into_iter() {
-      if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_basic_info(each_artist) {
+      if let Some(parsed_artist) = JioSaavnPartialParser::parse_artist_preview(each_artist) {
         artists.push(parsed_artist);
       }
     }
