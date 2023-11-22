@@ -24,12 +24,11 @@ pub trait ValueExtras {
 
 impl ValueExtras for Value {
   fn get_string(&self) -> String {
-    let got = self.as_str().unwrap_or("");
-    entity::decode(got).to_string()
+    entity::decode(self.as_str().unwrap_or("")).to_string()
   }
 
   fn get_int(&self) -> i64 {
-    self.as_i64().unwrap_or(-1)
+    self.as_i64().unwrap_or(0)
   }
 
   fn get_str_as_int(&self) -> i64 {

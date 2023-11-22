@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use api::JioSaavn;
-use enums::{artist_category::ArtistCategory, sort_order::SortOrder};
+use enums::call::SearchFilter;
 use parser::JioSaavnResponseParser;
 
 pub mod api;
@@ -17,18 +17,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
   let store = valkeyre::database::Database::init(PathBuf::from(".temp"), "valk");
   let table = store.init_table("t");
 
-  match client
-    .artist(
-      "MXn8bhT308U_",
-      1,
-      50,
-      50,
-      SortOrder::Asc,
-      ArtistCategory::Popular,
-    )
-    .await
-  {
-    Ok(res) => match JioSaavnResponseParser::parse_artist(res) {
+  match client.search("radha", 1, 20, SearchFilter::SongResults).await {
+    Ok(res) => match JioSaavnResponseParser::parse_song_results(res) {
       Some(parsed) => {
         if let Ok(json_str) = serde_json::to_string(&parsed) {
           table.set("k", &json_str);
