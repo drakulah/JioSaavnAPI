@@ -16,8 +16,8 @@ pub struct JioSaavnPartialParser {}
 pub struct JioSaavnResponseParser {}
 
 pub trait ValueExtras {
-  fn get_string(&self) -> String;
   fn get_int(&self) -> i64;
+  fn get_string(&self) -> String;
   fn get_str_as_int(&self) -> i64;
   fn get_arr(&self) -> Vec<Value>;
 }

@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
   let store = valkeyre::database::Database::init(PathBuf::from(".temp"), "valk");
   let table = store.init_table("t");
 
-  match client.search("radha", 1, 20, SearchFilter::SongResults).await {
+  match client.search("radha", 1, 20, SearchFilter::PlaylistResults).await {
     Ok(res) => match JioSaavnResponseParser::parse_song_results(res) {
       Some(parsed) => {
         if let Ok(json_str) = serde_json::to_string(&parsed) {
