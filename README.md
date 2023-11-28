@@ -1,2 +1,2 @@
 # JioSaavnAPI
-An unofficial JioSaavn API written in rust.
+An unofficial JioSaavn API.

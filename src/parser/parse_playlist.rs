@@ -43,7 +43,7 @@ impl JioSaavnResponseParser {
 
         let param = playlist["id"].get_string();
         let title = playlist["title"].get_string();
-        let r#type = playlist["type"].get_string();
+        let r#type = playlist["type"].get_string().to_uppercase();
         let url = playlist["perma_url"].get_string();
         let id = extract_id_from_url(url);
         let display_image = playlist["image"].get_string();
@@ -70,18 +70,22 @@ impl JioSaavnResponseParser {
           }
         }
 
+        if some_empty_string(&[id.clone(), title.clone(), param.clone()]) || r#type != "PLAYLIST" {
+          return None;
+        }
+
         Some(JioSaavnPlaylist {
           id,
           param,
-          r#type: r#type.to_uppercase(),
+          r#type,
           title,
+          subtitles,
           display_image,
           is_explicit,
           items_count,
           items,
           follower_count,
           fan_count,
-          subtitles,
         })
       }
       Err(_) => None,
@@ -112,25 +116,26 @@ impl JioSaavnPartialParser {
     let param = playlist_pre["id"].get_string();
     let title = playlist_pre["title"].get_string();
     let url = playlist_pre["perma_url"].get_string();
+    let r#type = playlist_pre["type"].get_string().to_uppercase();
     let id = extract_id_from_url(url);
     let subtitle = playlist_pre["subtitle"].get_string();
     let display_image = playlist_pre["image"].get_string();
     let items_count = playlist_pre["more_info"]["song_count"].get_str_as_int();
     let is_explicit = properize_explicit(playlist_pre["explicit_content"].get_string());
 
-    if some_empty_string(&[id.clone(), title.clone(), param.clone()]) {
-      None
-    } else {
-      Some(JioSaavnPlaylistPreview {
-        id,
-        param,
-        title,
-        subtitle,
-        r#type: "PLAYLIST_PREVIEW".to_string(),
-        display_image,
-        is_explicit,
-        items_count,
-      })
+    if some_empty_string(&[id.clone(), title.clone(), param.clone()]) || r#type != "PLAYLIST" {
+      return None;
     }
+
+    Some(JioSaavnPlaylistPreview {
+      id,
+      param,
+      title,
+      subtitle,
+      r#type: "PLAYLIST_PREVIEW".to_string(),
+      display_image,
+      is_explicit,
+      items_count,
+    })
   }
 }

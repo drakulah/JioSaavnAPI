@@ -21,6 +21,7 @@ impl JioSaavn {
           DefaultClient::req_builder()
             .method("GET")
             .uri(uri)
+            .header("Cookie", self.config_as_cookie())
             .body(Body::empty()),
         )
         .await

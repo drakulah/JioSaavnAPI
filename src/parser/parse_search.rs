@@ -2,11 +2,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use super::{
-  parse_album::JioSaavnAlbumPreview,
-  parse_artist::JioSaavnArtistPreview,
-  parse_playlist::JioSaavnPlaylistPreview,
-  parse_song::JioSaavnSong,
-  JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras,
+  parse_album::JioSaavnAlbumPreview, parse_artist::JioSaavnArtistPreview,
+  parse_playlist::JioSaavnPlaylistPreview, parse_song::JioSaavnSong, JioSaavnPartialParser,
+  JioSaavnResponseParser, ValueExtras,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -49,11 +47,7 @@ impl JioSaavnPartialParser {
     let mut results: Vec<JioSaavnUnknownItemType> = Vec::new();
     let blank_array: &Vec<Value> = &Vec::new();
 
-    for result in unknown_arr
-      .as_array()
-      .unwrap_or(blank_array)
-      .into_iter()
-    {
+    for result in unknown_arr.as_array().unwrap_or(blank_array).into_iter() {
       if let Some(parsed_song) = JioSaavnPartialParser::parse_song(result) {
         results.push(JioSaavnUnknownItemType::JioSaavnSong(parsed_song));
       } else if let Some(parsed_album_pre) = JioSaavnPartialParser::parse_album_preview(result) {

@@ -5,6 +5,7 @@ use crate::utils::entity;
 
 mod parse_album;
 mod parse_artist;
+mod parse_home;
 mod parse_playlist;
 mod parse_search;
 mod parse_song;

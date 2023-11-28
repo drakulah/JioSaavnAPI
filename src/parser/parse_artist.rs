@@ -47,6 +47,7 @@ impl JioSaavnResponseParser {
     match serde_json::from_str::<Value>(&text) {
       Ok(artist) => {
         let param = artist["artistId"].get_string();
+        let r#type = artist["type"].get_string().to_uppercase();
         let title = artist["name"].get_string();
         let display_image = artist["image"].get_string();
         let follower_count = artist["follower_count"].get_str_as_int();
@@ -116,10 +117,14 @@ impl JioSaavnResponseParser {
           }
         }
 
+        if some_empty_string(&[title.clone(), param.clone()]) || r#type != "ARTIST" {
+          return None;
+        }
+
         Some(JioSaavnArtist {
           title,
           param,
-          r#type: "ARTIST".to_string(),
+          r#type,
           display_image,
           follower_count,
           fan_count,
@@ -141,33 +146,24 @@ impl JioSaavnResponseParser {
 }
 
 impl JioSaavnPartialParser {
-  /**
-   * {
-   *     "id": "577926",
-   *     "name": "WALK THE MOON",
-   *     "role": "primary_artists",
-   *     "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *     "type": "artist",
-   *     "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   * }
-   */
   pub fn parse_artist_preview(artist: &Value) -> Option<JioSaavnArtistPreview> {
     let param = artist["id"].get_string();
     let perma_url = artist["perma_url"].get_string();
     let title = artist["name"].get_string();
     let display_image = artist["image"].get_string();
     let id = extract_id_from_url(perma_url);
+    let r#type = artist["type"].get_string().to_uppercase();
 
-    if !some_empty_string(&[id.clone(), title.clone(), param.clone()]) {
-      Some(JioSaavnArtistPreview {
-        id,
-        title,
-        param,
-        display_image,
-      })
-    } else {
-      None
+    if some_empty_string(&[id.clone(), title.clone(), param.clone()]) || r#type != "ARTIST" {
+      return None;
     }
+
+    Some(JioSaavnArtistPreview {
+      id,
+      title,
+      param,
+      display_image,
+    })
   }
 
   pub fn parse_artist_bio(bio: String) -> Vec<JioSaavnArtistBio> {

@@ -1,13 +1,20 @@
 [package]
-name = "jiosaavnapi"
+name = "jiosaavn_api"
 version = "0.1.0"
+authors = ["drakulah"]
 edition = "2021"
+description = "An unofficial JioSaavn API."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/drakulah/JioSaavnAPI"
+keywords = ["jio", "saavn", "api"]
 
 [dependencies]
-valkeyre = { path="../ValKeyRe" }
+valkeyre = "0.1.1"
+cookie = "0.18"
 hyper = "0.14"
 hyper-rustls = "0.24"
-serde_json = "1.0"
 percent-encoding = "2"
+serde_json = "1.0"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }

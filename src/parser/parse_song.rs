@@ -7,8 +7,8 @@ use crate::utils::{
 };
 
 use super::{
-  parse_album::JioSaavnAlbumBasicInfo, parse_artist::JioSaavnArtistPreview,
-  JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras,
+  parse_album::JioSaavnAlbumBasicInfo, parse_artist::JioSaavnArtistPreview, JioSaavnPartialParser,
+  JioSaavnResponseParser, ValueExtras,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -28,42 +28,9 @@ pub struct JioSaavnSong {
 }
 
 impl JioSaavnResponseParser {
-  /**
-   * [
-   *    {
-   *        "id": "5zJXFvhO",
-   *        "title": "Different Colors",
-   *        "type": "song",
-   *        "perma_url": "https://www.jiosaavn.com/song/different-colors/RRIhaTJGX3w",
-   *        "image": "http://c.saavncdn.com/689/TALKING-IS-HARD-English-2014-20200211230821-150x150.jpg",
-   *        "language": "english",
-   *        "year": "2014",
-   *        "play_count": "6411",
-   *        "explicit_content": "0",
-   *        "more_info": {
-   *            "album_id": "1206371",
-   *            "album": "TALKING IS HARD",
-   *            "encrypted_media_url": "iPPGVzyogeiPwpro65A0eUaQggN+8+J4aHbiPAIxpW3DetyR3quYNVxobKGg9vca6YJPL83a8Y0U6JDmDgHkt4PzFaL/aK97",
-   *            "artistMap": {
-   *                "primary_artists": [
-   *                    {
-   *                        "id": "577926",
-   *                        "name": "WALK THE MOON",
-   *                        "role": "primary_artists",
-   *                        "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *                        "type": "artist",
-   *                        "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   *                    }
-   *                ]
-   *            }
-   *        }
-   *    }
-   * ]
-   */
   pub fn parse_song(text: String) -> Option<JioSaavnSong> {
     match serde_json::from_str::<Value>(&text) {
       Ok(value) => {
-        /*** Ref ***/
         let song = &value["songs"][0];
         JioSaavnPartialParser::parse_song(song)
       }
@@ -73,41 +40,9 @@ impl JioSaavnResponseParser {
 }
 
 impl JioSaavnPartialParser {
-  /**
-   * {
-   *     "id": "5zJXFvhO",
-   *     "title": "Different Colors",
-   *     "type": "song",
-   *     "perma_url": "https://www.jiosaavn.com/song/different-colors/RRIhaTJGX3w",
-   *     "image": "http://c.saavncdn.com/689/TALKING-IS-HARD-English-2014-20200211230821-150x150.jpg",
-   *     "language": "english",
-   *     "year": "2014",
-   *     "play_count": "6411",
-   *     "explicit_content": "0",
-   *     "more_info": {
-   *         "album_id": "1206371",
-   *         "album": "TALKING IS HARD",
-   *         "encrypted_media_url": "iPPGVzyogeiPwpro65A0eUaQggN+8+J4aHbiPAIxpW3DetyR3quYNVxobKGg9vca6YJPL83a8Y0U6JDmDgHkt4PzFaL/aK97",
-   *         "artistMap": {
-   *             "primary_artists": [
-   *                 {
-   *                     "id": "577926",
-   *                     "name": "WALK THE MOON",
-   *                     "role": "primary_artists",
-   *                     "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *                     "type": "artist",
-   *                     "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   *                 }
-   *             ]
-   *         }
-   *     }
-   * }
-   */
   pub fn parse_song(song: &Value) -> Option<JioSaavnSong> {
-    /*** Ref ***/
     let more_info = &song["more_info"];
 
-    /*** Song ***/
     let id = extract_id_from_url(song["perma_url"].get_string());
     let title = song["title"].get_string();
     let r#type = song["type"].get_string();
@@ -119,7 +54,6 @@ impl JioSaavnPartialParser {
     let duration = more_info["duration"].get_str_as_int();
     let is_explicit = properize_explicit(song["explicit_content"].get_string());
 
-    /*** Validate Song ***/
     if some_empty_string(&[
       id.clone(),
       title.clone(),
@@ -129,7 +63,6 @@ impl JioSaavnPartialParser {
       return None;
     }
 
-    /*** Album & Artists ***/
     let nullable_album = JioSaavnPartialParser::parse_album_basic_info(more_info);
     let artist_array_default = &Vec::new();
     let artists_arr = more_info["artistMap"]["primary_artists"]
@@ -143,7 +76,6 @@ impl JioSaavnPartialParser {
       }
     }
 
-    /*** Validate Artists ***/
     if artists.is_empty() {
       return None;
     }

@@ -44,68 +44,9 @@ pub struct JioSaavnAlbum {
 }
 
 impl JioSaavnResponseParser {
-  /**
-   * {
-   *    "id": "1206371",
-   *    "title": "TALKING IS HARD",
-   *    "type": "album",
-   *    "perma_url": "https://www.jiosaavn.com/album/talking-is-hard/9yl-XupdHyI_",
-   *    "image": "http://c.saavncdn.com/689/TALKING-IS-HARD-English-2014-20200211230821-150x150.jpg",
-   *    "language": "english",
-   *    "year": "2014",
-   *    "explicit_content": "0",
-   *    "list_count": "12",
-   *    "list_type": "song",
-   *    "list": [
-   *         {
-   *             "id": "5zJXFvhO",
-   *             "title": "Different Colors",
-   *             "type": "song",
-   *             "perma_url": "https://www.jiosaavn.com/song/different-colors/RRIhaTJGX3w",
-   *             "image": "http://c.saavncdn.com/689/TALKING-IS-HARD-English-2014-20200211230821-150x150.jpg",
-   *             "language": "english",
-   *             "year": "2014",
-   *             "play_count": "6411",
-   *             "explicit_content": "0",
-   *             "more_info": {
-   *                 "album_id": "1206371",
-   *                 "album": "TALKING IS HARD",
-   *                 "encrypted_media_url": "iPPGVzyogeiPwpro65A0eUaQggN+8+J4aHbiPAIxpW3DetyR3quYNVxobKGg9vca6YJPL83a8Y0U6JDmDgHkt4PzFaL/aK97",
-   *                 "artistMap": {
-   *                     "primary_artists": [
-   *                         {
-   *                             "id": "577926",
-   *                             "name": "WALK THE MOON",
-   *                             "role": "primary_artists",
-   *                             "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *                             "type": "artist",
-   *                             "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   *                         }
-   *                     ]
-   *                 }
-   *             }
-   *         }
-   *    ],
-   *    "more_info": {
-   *        "artistMap": {
-   *            "artists": [
-   *                {
-   *                    "id": "577926",
-   *                    "name": "WALK THE MOON",
-   *                    "role": "",
-   *                    "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *                    "type": "artist",
-   *                    "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   *                }
-   *            ]
-   *        }
-   *    }
-   * }
-   */
   pub fn parse_album(text: String) -> Option<JioSaavnAlbum> {
     match serde_json::from_str::<Value>(&text) {
       Ok(album) => {
-        /*** Ref ***/
         let more_info = &album["more_info"];
 
         let url = album["perma_url"].get_string();
@@ -113,7 +54,7 @@ impl JioSaavnResponseParser {
         let param = album["id"].get_string();
         let lang = album["language"].get_string();
         let year = album["year"].get_string();
-        let r#type = album["type"].get_string();
+        let r#type = album["type"].get_string().to_uppercase();
         let title = album["title"].get_string();
         let display_image = album["image"].get_string();
         let is_explicit = properize_explicit(album["explicit_content"].get_string());
@@ -140,54 +81,27 @@ impl JioSaavnResponseParser {
           }
         }
 
-        if some_empty_string(&[id.clone(), title.clone()]) {
-          None
-        } else {
-          Some(JioSaavnAlbum {
-            id,
-            lang,
-            year,
-            param,
-            r#type: r#type.to_uppercase(),
-            title,
-            is_explicit,
-            display_image,
-            artists,
-            items,
-          })
+        if some_empty_string(&[id.clone(), title.clone()]) || r#type != "ALBUM" {
+          return None;
         }
+
+        Some(JioSaavnAlbum {
+          id,
+          lang,
+          year,
+          param,
+          r#type: r#type.to_uppercase(),
+          title,
+          is_explicit,
+          display_image,
+          artists,
+          items,
+        })
       }
       Err(_) => None,
     }
   }
 
-  /**
-   * [
-   *    {
-   *        "id": "1421904",
-   *        "title": "Shut Up And Dance (Acoustic)",
-   *        "type": "album",
-   *        "perma_url": "https://www.jiosaavn.com/album/shut-up-and-dance-acoustic/Z0SzHx5Oxrk_",
-   *        "image": "http://c.saavncdn.com/999/Shut-Up-And-Dance-Acoustic-English-2015-150x150.jpg",
-   *        "explicit_content": "0",
-   *        "list_count": "0",
-   *        "more_info": {
-   *            "artistMap": {
-   *                "artists": [
-   *                    {
-   *                        "id": "577926",
-   *                        "name": "WALK THE MOON",
-   *                        "role": "",
-   *                        "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *                        "type": "artist",
-   *                        "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   *                    }
-   *                ]
-   *            }
-   *        }
-   *    }
-   * ]
-   */
   pub fn parse_related_albums(text: String) -> Vec<JioSaavnAlbumPreview> {
     let mut album_pre_array: Vec<JioSaavnAlbumPreview> = Vec::new();
     match serde_json::from_str::<Value>(&text) {
@@ -209,13 +123,6 @@ impl JioSaavnResponseParser {
 }
 
 impl JioSaavnPartialParser {
-  /**
-   * {
-   *    "album_id": "1070004",
-   *    "album": "TALKING IS HARD",
-   *    "album_url": "https://www.jiosaavn.com/album/student-of-the-year/QpcbT2oOB74_"
-   * }
-   */
   pub fn parse_album_basic_info(basic_album: &Value) -> Option<JioSaavnAlbumBasicInfo> {
     let url = basic_album["album_url"].get_string();
     let id = extract_id_from_url(url);
@@ -223,40 +130,16 @@ impl JioSaavnPartialParser {
     let param = basic_album["album_id"].get_string();
 
     if some_empty_string(&[id.clone(), title.clone(), param.clone()]) {
-      None
-    } else {
-      Some(JioSaavnAlbumBasicInfo { id, title, param })
+      return None;
     }
+
+    Some(JioSaavnAlbumBasicInfo { id, title, param })
   }
 
-  /**
-   * {
-   *     "id": "1421904",
-   *     "title": "Shut Up And Dance (Acoustic)",
-   *     "type": "album",
-   *     "perma_url": "https://www.jiosaavn.com/album/shut-up-and-dance-acoustic/Z0SzHx5Oxrk_",
-   *     "image": "http://c.saavncdn.com/999/Shut-Up-And-Dance-Acoustic-English-2015-150x150.jpg",
-   *     "explicit_content": "0",
-   *     "list_count": "0",
-   *     "more_info": {
-   *         "artistMap": {
-   *             "artists": [
-   *                 {
-   *                     "id": "577926",
-   *                     "name": "WALK THE MOON",
-   *                     "role": "",
-   *                     "image": "http://c.saavncdn.com/artists/WALK_THE_MOON_150x150.jpg",
-   *                     "type": "artist",
-   *                     "perma_url": "https://www.jiosaavn.com/artist/walk-the-moon-songs/e0q9qdHeIys_"
-   *                 }
-   *             ]
-   *         }
-   *     }
-   * }
-   */
   pub fn parse_album_preview(album_preview: &Value) -> Option<JioSaavnAlbumPreview> {
     let url = album_preview["perma_url"].get_string();
     let id = extract_id_from_url(url);
+    let r#type = album_preview["type"].get_string().to_uppercase();
     let title = album_preview["title"].get_string();
     let display_image = album_preview["image"].get_string();
     let param = album_preview["id"].get_string();
@@ -274,18 +157,18 @@ impl JioSaavnPartialParser {
       }
     }
 
-    if some_empty_string(&[id.clone(), title.clone(), param.clone()]) {
-      None
-    } else {
-      Some(JioSaavnAlbumPreview {
-        id,
-        param,
-        title,
-        artists,
-        is_explicit,
-        display_image,
-        r#type: "ALBUM_PREVIEW".to_string(),
-      })
+    if some_empty_string(&[id.clone(), title.clone(), param.clone()]) || r#type != "ALBUM" {
+      return None;
     }
+
+    Some(JioSaavnAlbumPreview {
+      id,
+      param,
+      title,
+      artists,
+      is_explicit,
+      display_image,
+      r#type: "ALBUM_PREVIEW".to_string(),
+    })
   }
 }
