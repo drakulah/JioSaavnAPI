@@ -10,8 +10,6 @@ repository = "https://github.com/drakulah/JioSaavnAPI"
 keywords = ["jio", "saavn", "api"]
 
 [dependencies]
-valkeyre = "0.1.1"
-cookie = "0.18"
 hyper = "0.14"
 hyper-rustls = "0.24"
 percent-encoding = "2"

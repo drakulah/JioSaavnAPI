@@ -7,8 +7,9 @@ pub enum ErrorKind {
   BytesConversion,
   StringConversion,
   JsonConversion,
-}
 
+  NoData,
+}
 
 impl ErrorKind {
   pub fn as_str(&self) -> &str {
@@ -19,6 +20,7 @@ impl ErrorKind {
       ErrorKind::BytesConversion => "BytesConversion",
       ErrorKind::StringConversion => "StringConversion",
       ErrorKind::JsonConversion => "JsonConversion",
+      ErrorKind::NoData => "NoData",
     }
   }
 }

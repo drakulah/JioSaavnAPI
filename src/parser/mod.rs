@@ -3,12 +3,13 @@ use serde_json::Value;
 
 use crate::utils::entity;
 
-mod parse_album;
-mod parse_artist;
-mod parse_home;
-mod parse_playlist;
-mod parse_search;
-mod parse_song;
+pub mod parse_album;
+pub mod parse_artist;
+pub mod parse_auth_url;
+pub mod parse_home;
+pub mod parse_playlist;
+pub mod parse_search;
+pub mod parse_song;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JioSaavnPartialParser {}

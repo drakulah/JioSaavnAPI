@@ -4,6 +4,8 @@ use crate::{
   client::default_client::DefaultClient,
   enums::call,
   http::{errors::ErrorKind, http::fetch},
+  parser::JioSaavnResponseParser,
+  types::JioSaavnSearch,
 };
 
 use super::JioSaavn;
@@ -15,7 +17,7 @@ impl JioSaavn {
     page: i16,
     results_count: i16,
     filter_param: call::SearchFilter,
-  ) -> Result<String, ErrorKind> {
+  ) -> Result<JioSaavnSearch, ErrorKind> {
     let uri_builder = DefaultClient::uri_builder()
       .search_param("q", query)
       .search_param("p", page.to_string().as_str())
@@ -33,7 +35,13 @@ impl JioSaavn {
         )
         .await
         {
-          Ok(fetched) => Ok(fetched.to_string()),
+          Ok(fetched) => {
+            if let Some(res) = JioSaavnResponseParser::parse_search_results(fetched.to_string()) {
+              Ok(res)
+            } else {
+              Err(ErrorKind::NoData)
+            }
+          }
           Err(e) => Err(e),
         }
       }

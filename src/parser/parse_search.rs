@@ -1,29 +1,11 @@
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::{
-  parse_album::JioSaavnAlbumPreview, parse_artist::JioSaavnArtistPreview,
-  parse_playlist::JioSaavnPlaylistPreview, parse_song::JioSaavnSong, JioSaavnPartialParser,
-  JioSaavnResponseParser, ValueExtras,
-};
+use crate::types::{JioSaavnSearch, JioSaavnUnknownItemType};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub enum JioSaavnUnknownItemType {
-  JioSaavnSong(JioSaavnSong),
-  JioSaavnAlbumPreview(JioSaavnAlbumPreview),
-  JioSaavnArtistPreview(JioSaavnArtistPreview),
-  JioSaavnPlaylistPreview(JioSaavnPlaylistPreview),
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnSearch {
-  pub total: i64,
-  pub start: i64,
-  pub results: Vec<JioSaavnUnknownItemType>,
-}
+use super::{JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras};
 
 impl JioSaavnResponseParser {
-  pub fn parse_song_results(text: String) -> Option<JioSaavnSearch> {
+  pub fn parse_search_results(text: String) -> Option<JioSaavnSearch> {
     match serde_json::from_str::<Value>(&text) {
       Ok(value) => {
         let total = value["total"].get_int();

@@ -4,6 +4,8 @@ use crate::{
   client::default_client::DefaultClient,
   enums::call,
   http::{errors::ErrorKind, http::fetch},
+  parser::JioSaavnResponseParser,
+  types::JioSaavnPlaylist,
 };
 
 use super::JioSaavn;
@@ -14,7 +16,7 @@ impl JioSaavn {
     token: &str,
     page: i16,
     song_count: i16,
-  ) -> Result<String, ErrorKind> {
+  ) -> Result<JioSaavnPlaylist, ErrorKind> {
     let uri_builder = DefaultClient::uri_builder()
       .search_param("token", token)
       .search_param("type", "playlist")
@@ -33,7 +35,13 @@ impl JioSaavn {
         )
         .await
         {
-          Ok(fetched) => Ok(fetched.to_string()),
+          Ok(fetched) => {
+            if let Some(res) = JioSaavnResponseParser::parse_playlist(fetched.to_string()) {
+              Ok(res)
+            } else {
+              Err(ErrorKind::NoData)
+            }
+          }
           Err(e) => Err(e),
         }
       }

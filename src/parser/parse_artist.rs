@@ -1,46 +1,14 @@
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::utils::{array::some_empty_string, parser::extract_id_from_url};
-
-use super::{
-  parse_album::JioSaavnAlbumPreview, parse_playlist::JioSaavnPlaylistPreview,
-  parse_song::JioSaavnSong, JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras,
+use crate::{
+  types::{
+    JioSaavnAlbumPreview, JioSaavnArtist, JioSaavnArtistBio, JioSaavnArtistPreview,
+    JioSaavnPlaylistPreview, JioSaavnSong,
+  },
+  utils::{array::some_empty_string, parser::extract_id_from_url},
 };
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnArtistPreview {
-  pub id: String,
-  pub title: String,
-  pub param: String,
-  pub display_image: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnArtistBio {
-  pub title: String,
-  pub text: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnArtist {
-  pub title: String,
-  pub param: String,
-  pub r#type: String,
-  pub display_image: String,
-  pub follower_count: i64,
-  pub fan_count: i64,
-  pub is_verified: bool,
-  pub date_of_birth: String,
-  pub bio: Vec<JioSaavnArtistBio>,
-  pub top_songs: Vec<JioSaavnSong>,
-  pub top_albums: Vec<JioSaavnAlbumPreview>,
-  pub dedicated_artist_playlists: Vec<JioSaavnPlaylistPreview>,
-  pub featured_artist_playlists: Vec<JioSaavnPlaylistPreview>,
-  pub singles: Vec<JioSaavnAlbumPreview>,
-  pub latest_release: Vec<JioSaavnAlbumPreview>,
-  pub similar_artists: Vec<JioSaavnArtistPreview>,
-}
+use super::{JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras};
 
 impl JioSaavnResponseParser {
   pub fn parse_artist(text: String) -> Option<JioSaavnArtist> {

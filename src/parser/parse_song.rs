@@ -1,31 +1,14 @@
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::utils::{
-  array::some_empty_string,
-  parser::{extract_id_from_url, properize_explicit},
+use crate::{
+  types::JioSaavnSong,
+  utils::{
+    array::some_empty_string,
+    parser::{extract_id_from_url, properize_explicit},
+  },
 };
 
-use super::{
-  parse_album::JioSaavnAlbumBasicInfo, parse_artist::JioSaavnArtistPreview, JioSaavnPartialParser,
-  JioSaavnResponseParser, ValueExtras,
-};
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnSong {
-  pub id: String,
-  pub r#type: String,
-  pub title: String,
-  pub lang: String,
-  pub year: String,
-  pub enc_media_url: String,
-  pub display_image: String,
-  pub plays: i64,
-  pub duration: i64,
-  pub is_explicit: bool,
-  pub album: JioSaavnAlbumBasicInfo,
-  pub artists: Vec<JioSaavnArtistPreview>,
-}
+use super::{JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras};
 
 impl JioSaavnResponseParser {
   pub fn parse_song(text: String) -> Option<JioSaavnSong> {

@@ -36,9 +36,10 @@ impl Uri {
   }
 
   pub fn search_param(&mut self, key: &str, value: &str) -> Uri {
-    self
-      .search_params
-      .insert(key.trim().to_string(), percent_encoding::utf8_percent_encode(value.trim(), NON_ALPHANUMERIC).to_string());
+    self.search_params.insert(
+      key.trim().to_string(),
+      percent_encoding::utf8_percent_encode(value.trim(), NON_ALPHANUMERIC).to_string(),
+    );
     self.clone()
   }
 

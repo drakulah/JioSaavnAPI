@@ -1,21 +1,8 @@
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::{
-  parse_search::JioSaavnUnknownItemType, JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras,
-};
+use crate::types::{JioSaavnHome, JioSaavnItemContainer};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnItemContainer {
-  pub title: String,
-  pub subtitle: String,
-  pub items: Vec<JioSaavnUnknownItemType>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct JioSaavnHome {
-  pub containers: Vec<JioSaavnItemContainer>,
-}
+use super::{JioSaavnPartialParser, JioSaavnResponseParser, ValueExtras};
 
 impl JioSaavnResponseParser {
   pub fn parse_home(text: String) -> JioSaavnHome {

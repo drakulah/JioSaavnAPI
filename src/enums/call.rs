@@ -1,5 +1,9 @@
 /******* Search *******/
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum SearchFilter {
   SongResults,
   AlbumResults,
@@ -29,6 +33,8 @@ impl SearchFilter {
 
 /******* WebApi *******/
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum WebApi {
   Get,
   GetLaunchData,
@@ -52,8 +58,10 @@ impl WebApi {
 
 /******* Autocomplete *******/
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Autocomplete {
-  Get
+  Get,
 }
 
 impl Autocomplete {
@@ -72,9 +80,11 @@ impl Autocomplete {
 
 /******* Reco *******/
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Reco {
   GetAlbumReco,
-  GetPlaylistReco
+  GetPlaylistReco,
 }
 
 impl Reco {
@@ -95,8 +105,10 @@ impl Reco {
 
 /******* Song *******/
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Song {
-  GenerateAuthToken
+  GenerateAuthToken,
 }
 
 impl Song {
