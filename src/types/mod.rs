@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", untagged)]
 pub enum JioSaavnUnknownItemType {
   JioSaavnSong(JioSaavnSong),
   JioSaavnAlbumPreview(JioSaavnAlbumPreview),
