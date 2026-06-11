@@ -16,16 +16,10 @@ Here are some things that you can fetch using this library:
 
 ## Installation
 
-Run the following Cargo command in your project directory:
-
-```sh
-cargo add jiosaavn_api
-```
-
-Or add the following line to your Cargo.toml:
+Add the following line to your Cargo.toml:
 
 ```toml
-jiosaavn_api = "0.1"
+jiosaavn_api = "/path/to/jiosaavn_api"
 ```
 
 ## Example
